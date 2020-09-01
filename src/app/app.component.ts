@@ -21,12 +21,12 @@ export class AppComponent {
   }
 
   initializeApp() {
-    this.platform.ready().then(() => { 
-      (<any>window).plugins.intentShim.getIntent(
-        //success
-        (intent) => { this.intentData.value = intent;},
-        //error
-        ()=>{ alert('Error getting intent'); }
+    this.platform.ready().then(() => {
+      (window as any).plugins.intentShim.getIntent(
+        // success
+        (intent) => { this.intentData.value = intent; },
+        // error
+        () => { alert('Error getting intent'); }
       );
       this.statusBar.styleDefault();
       this.splashScreen.hide();

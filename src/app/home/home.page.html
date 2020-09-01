@@ -1,17 +1,39 @@
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
   <div id="container">
-    <ion-item>
-      <ion-input name="inputPath" [(ngModel)]="inputPath" placeholder="Enter File Path"></ion-input>
-      <ion-button shape="round" (click)="getFile()">GO</ion-button>
-      <ion-button color="success" (click)="openFile()">OPEN</ion-button>
-    </ion-item>
-    <strong>Data: </strong>
-    <p>{{ pageContent }}</p>
+    <form [formGroup]="reportForm" (ngSubmit)="fileRead()">
+      <ion-grid style="--ion-grid-padding: 0px">
+        <ion-row style="--ion-grid-padding: 0px">
+          <ion-col size="9">
+            <ion-item>
+              <ion-input required formControlName="inspector" placeholder="Inspector (Your Name)"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col size="3">
+            <ion-item>
+              <ion-input required style="text-align: right;" type="number" formControlName="serial"
+                placeholder="Monitor #"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12">
+            <ion-item>
+              <ion-input required formControlName="address" placeholder="Enter Full Address or →">
+              </ion-input>
+              <ion-button *ngIf="!reportForm.controls.address.dirty" fill="clear" (click)="paste()">
+                Paste
+              </ion-button>
+              <ion-button *ngIf="reportForm.controls.address.dirty" fill="clear" color="danger"
+                (click)="reportForm.controls.address.reset()">
+                <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+              </ion-button>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      <ion-button shape="round" color="success" type="submit" [disabled]="!reportForm.valid">
+        <ion-icon slot="icon-only" name="checkmark-done-outline"></ion-icon>
+      </ion-button>
+    </form>
   </div>
 </ion-content>
