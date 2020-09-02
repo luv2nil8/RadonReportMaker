@@ -1,6 +1,11 @@
 <ion-content>
 <div id="container">
-  <p><strong> Report saved to Downloads as: </strong><br>{{ location }}</p>
+  <p><strong>{{ location }}</strong></p>
+   <br>
+  <canvas #radonCanvas width="1000" height="750"></canvas>
+  <br>
+  <ion-button (click)="doTheThing()" expand="block" color="success">
+    SAVE TO DOWNLOADS FOLDER
+  </ion-button>
 </div>
-<canvas #radonCanvas></canvas>
 </ion-content>
