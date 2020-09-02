@@ -74,7 +74,7 @@ export class Report {
 
     extractResult(): boolean{
         const max = 4;
-        return this.average >= max;
+        return this.average < max;
     }
 
 }

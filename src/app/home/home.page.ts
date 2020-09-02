@@ -60,7 +60,6 @@ export class HomePage implements OnInit {
       path: fileURI,
       encoding: FilesystemEncoding.UTF8
     });
-    console.log(contents);
     this.fileContents = contents.data;
   }
 
