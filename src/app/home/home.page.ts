@@ -82,7 +82,10 @@ export class HomePage implements OnInit {
 
   paste() {
     this.clipboard.paste().then(
-      text => this.reportForm.controls.address.setValue(text)
+      text => {
+        this.reportForm.controls.address.setValue(text);
+        this.reportForm.markAsDirty();
+      }
     );
   }
    toTitleCase(str) {
