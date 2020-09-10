@@ -46,11 +46,12 @@ export class Report {
         return new Date(DT[year], DT[month], DT[day], DT[hour], DT[min]);
     }
     extractData(): RadonDataSlice[]{
+        debugger;
         const inputString = this.inputString;
-        const dataStrings = /(\d\).+)/.exec(inputString)[0].split(/\d*\), /).slice(1);
+        const dataStrings = inputString.match(/\d+.\d+.\d+\s\d*\:\d*:\d*,\s+\d.\d+,\s+\d+,\s+\d+/g);
         const radonData = [];
         dataStrings.forEach((dataString) => {
-            const slice = dataString.split(/,\s*/);
+            const slice = dataString.split(/,\s+/);
             const dataSlice = new RadonDataSlice();
             const DS = slice[0].split(/-|\:|\s/);
             dataSlice.dateTime = new Date(+DS[0], +DS[1], +DS[2], +DS[3], +DS[4], +DS[5]);

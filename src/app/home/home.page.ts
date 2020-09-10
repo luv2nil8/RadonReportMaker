@@ -41,9 +41,9 @@ export class HomePage implements OnInit {
       address: ['', [Validators.required]],
       serial: ['', [Validators.required]],
     });
-    this.reportForm.controls.inspector.valueChanges.subscribe( val => this.inspector = val );
+    this.reportForm.controls.inspector.valueChanges.subscribe( val => this.inspector = this.toTitleCase(val.trim()) );
     this.reportForm.controls.serial.valueChanges.subscribe( val => this.serial = val );
-    this.reportForm.controls.address.valueChanges.subscribe( val => this.address = val );
+    this.reportForm.controls.address.valueChanges.subscribe( val => this.address = this.toTitleCase(val.trim()) );
 
     try {
       const fileURI = this.intentData.value.clipItems[0].uri;
@@ -81,5 +81,12 @@ export class HomePage implements OnInit {
     this.clipboard.paste().then(
       text => this.reportForm.controls.address.setValue(text)
     );
+  }
+   toTitleCase(str) {
+    str = str.toLowerCase().split(' ');
+    for (let i = 0; i < str.length; i++) {
+      str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1);
+    }
+    return str.join(' ');
   }
 }
