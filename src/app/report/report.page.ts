@@ -25,7 +25,7 @@ export class ReportPage implements OnInit, AfterViewInit {
 
   report: Report;
   pdfObj: any;
-  location: string;
+  saveLocation: string;
   readings: any[] = [[{ colSpan: 12, text: 'Hourly Readings:' }, '', '', '', '', '', '', '', '', '', '', '']];
   graphData: number[] = [];
   constructor(
@@ -37,7 +37,7 @@ export class ReportPage implements OnInit, AfterViewInit {
   ngOnInit() {
     this.report = this.reportData.report;
     console.table(this.report.data);
-    this.location = this.report.address.trim().replace(/\s|,|-|\.|\/|\\,/g, '_').replace(/\_+/g, '_') + '.pdf';
+    this.saveLocation = this.report.address.trim().replace(/\s|,|-|\.|\/|\\,/g, '_').replace(/\_+/g, '_') + '.pdf';
     const graphData = [];
     for (let i = 0; i < 4; i++) {
       const row = [];
@@ -238,7 +238,7 @@ export class ReportPage implements OnInit, AfterViewInit {
         this.pdfObj.download();
       } else {
         const result = await Filesystem.writeFile({
-          path: 'Download/' + this.report.address + '.pdf',
+          path: 'Download/' + this.saveLocation,
           data: base64blob,
           directory: FilesystemDirectory.ExternalStorage
         });
