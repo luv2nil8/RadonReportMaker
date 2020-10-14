@@ -22,6 +22,7 @@ export class AppComponent {
 
   initializeApp() {
     this.platform.ready().then(() => {
+      debugger;
       (window as any).plugins.intentShim.getIntent(
         // success
         (intent) => { this.intentData.value = intent; },

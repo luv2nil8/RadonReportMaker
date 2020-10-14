@@ -1,5 +1,14 @@
 <ion-content [fullscreen]="true">
   <div id="container">
+    <ion-item>
+      <ion-label>Logged In:</ion-label>
+      <ion-icon *ngIf=" auth.loggedIn===null" slot="end" name="help" color="warning"></ion-icon>
+      <ion-icon *ngIf="auth.loggedIn" slot="end" name="checkmark" color="success"></ion-icon>
+      <ion-icon *ngIf="!auth.loggedIn && !(auth.loggedIn===null)" slot="end" name="close" color="danger"></ion-icon>
+    </ion-item>
+    <ion-button (click)="logout()" shape="round" color="danger">
+        Logout
+    </ion-button>
     <form [formGroup]="reportForm" (ngSubmit)="fileRead()">
       <ion-grid style="--ion-grid-padding: 0px">
         <ion-row style="--ion-grid-padding: 0px">

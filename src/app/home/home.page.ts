@@ -1,8 +1,8 @@
+import { AuthService } from './../services/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { IntentDataService } from '../services/intent-data.service';
 import { Plugins, FilesystemEncoding } from '@capacitor/core';
 const { Filesystem } = Plugins;
-import { FileChooser } from '@ionic-native/file-chooser/ngx';
 import { Report } from '../report/report';
 import { NavController, Platform } from '@ionic/angular';
 import { ReportDataService } from '../services/report-data.service';
@@ -31,12 +31,14 @@ export class HomePage implements OnInit {
     private navCtrl: NavController,
     public formBuilder: FormBuilder,
     private clipboard: Clipboard,
-    private platform: Platform
+    private platform: Platform,
+    public auth: AuthService
 
   ) { }
 
   ngOnInit() {
     this.back = this.platform.backButton.subscribeWithPriority(1, () => {
+      // tslint:disable-next-line: no-string-literal
       navigator['app'].exitApp();
   });
     this.reportForm = this.formBuilder.group({
@@ -65,6 +67,11 @@ export class HomePage implements OnInit {
     this.fileContents = contents.data;
   }
 
+  logout(){
+    this.auth.logout();
+    console.log(this.auth.loggedIn);
+
+  }
   fileRead() {
 
     try {

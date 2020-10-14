@@ -1,3 +1,4 @@
+import { NativeStorage } from '@ionic-native/native-storage/ngx';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
@@ -11,6 +12,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { FileChooser } from '@ionic-native/file-chooser/ngx';
 import { FormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
+import { HTTP } from '@ionic-native/http/ngx';
 
 
 
@@ -19,6 +21,8 @@ import { Clipboard } from '@ionic-native/clipboard/ngx';
   entryComponents: [],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
   providers: [
+    HTTP,
+    NativeStorage,
     NavParams,
     Clipboard,
     ReactiveFormsModule,

@@ -1,0 +1,43 @@
+<ion-content [fullscreen]="true">
+<ion-grid fixed>
+  <ion-row>
+    <ion-col size="1"></ion-col>
+    <ion-col size="10">
+      <h4>Sign in using your ISN Login Information</h4>
+      <h5>If you don't know your info, try signing into ISN, and/or resetting the password</h5>
+    </ion-col>
+    <ion-col size="1"></ion-col>
+  </ion-row>
+</ion-grid>
+<form [formGroup]="reportForm" (ngSubmit)="login()">
+      <ion-grid style="--ion-grid-padding: 0px">
+        <ion-row style="--ion-grid-padding: 0px">
+          <ion-col size="12">
+            <ion-item>
+              <ion-input required formControlName="username" placeholder="Username"></ion-input>
+              <ion-button *ngIf="reportForm.controls.username.dirty" fill="clear" color="primary"
+                (click)="reportForm.controls.username.reset()">
+              <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+            </ion-button>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12">
+            <ion-item>
+              <ion-input required formControlName="password" placeholder="Password" type="password">
+              </ion-input>
+              <ion-button *ngIf="reportForm.controls.password.dirty" fill="clear" color="primary"
+                (click)="reportForm.controls.password.reset()">
+                <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+              </ion-button>
+            </ion-item>
+            <span *ngIf="badCredentials" color="danger">User/Password Wrong</span>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      <ion-button shape="round" color="success" type="submit" [disabled]="!reportForm.valid">
+        Login
+        <ion-icon slot="end" name="checkmark-done-outline"></ion-icon>
+      </ion-button>
+    </form>
