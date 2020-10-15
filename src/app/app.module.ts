@@ -10,9 +10,10 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { FileChooser } from '@ionic-native/file-chooser/ngx';
-import { FormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { HTTP } from '@ionic-native/http/ngx';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
 
 
 
@@ -21,6 +22,7 @@ import { HTTP } from '@ionic-native/http/ngx';
   entryComponents: [],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
   providers: [
+    Geolocation,
     HTTP,
     NativeStorage,
     NavParams,
