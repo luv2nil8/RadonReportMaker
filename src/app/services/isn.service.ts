@@ -76,10 +76,11 @@ export class IsnService {
     }
   }
 
-  async getNearestOrders(): Promise<Coordinates[]>{
+  async getNearestOrders(): Promise<any[]>{
 
     const PositionNow = await this.geolocation.getCurrentPosition();
     const orders = await this.getOrders();
+
     // tslint:disable-next-line: prefer-for-of
     for ( let i = 0; i < orders.length; i++) {
       const distance = Math.sqrt( // distance formula
@@ -90,30 +91,28 @@ export class IsnService {
       // tslint:disable-next-line: object-literal-shorthand
       Object.assign(orders[i], { distance: distance });
     }
+
     orders.sort((a, b) => {
       const x = a.distance;
       const y = b.distance;
       return ((x < y) ? -1 : ((x > y) ? 1 : 0));
     });
+
     const proximateOrders = orders.filter(order => order.distance < ACCURACY_FILTER);
 
-    if (proximateOrders.length === 1) {
-      console.table(proximateOrders[0]);
-      return Promise.resolve(proximateOrders);
-
-    } else if (proximateOrders.length > 1) {
+    if (proximateOrders.length > 0) {
       console.log('PROXIMATE ORDERS');
       for (const orderEntry of proximateOrders){
         console.table(orderEntry);
       }
-      return proximateOrders;
+      return Promise.resolve(proximateOrders.slice(0, proximateOrders.length < 10 ? proximateOrders.length : 9));
 
     } else {
       console.error('Nothing Within 100 Meters, Defaulting to closest Orders');
       for (const orderEntry of orders){
         console.table(orderEntry);
       }
-      orders.slice(0, orders.length < 10 ? orders.length : 9);
+      return Promise.resolve(orders.slice(0, orders.length < 10 ? orders.length : 9));
     }
   }
 }

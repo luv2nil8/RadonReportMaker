@@ -1,48 +1,31 @@
 <ion-content [fullscreen]="true">
   <div id="container">
-    <ion-item>
-      <ion-label>Logged In:</ion-label>
-      <ion-icon *ngIf=" auth.loggedIn===null" slot="end" name="help" color="warning"></ion-icon>
-      <ion-icon *ngIf="auth.loggedIn" slot="end" name="checkmark" color="success"></ion-icon>
-      <ion-icon *ngIf="!auth.loggedIn && !(auth.loggedIn===null)" slot="end" name="close" color="danger"></ion-icon>
-    </ion-item>
-    <ion-button (click)="logout()" shape="round" color="danger">
-        Logout
-    </ion-button>
-    <form [formGroup]="reportForm" (ngSubmit)="fileRead()">
-      <ion-grid style="--ion-grid-padding: 0px">
-        <ion-row style="--ion-grid-padding: 0px">
-          <ion-col size="9">
-            <ion-item>
-              <ion-input required formControlName="inspector" placeholder="Inspector (Your Name)"></ion-input>
-            </ion-item>
-          </ion-col>
-          <ion-col size="3">
-            <ion-item>
-              <ion-input required style="text-align: right;" type="number" formControlName="serial"
-                placeholder="Monitor #"></ion-input>
-            </ion-item>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col size="12">
-            <ion-item>
-              <ion-input required formControlName="address" placeholder="Enter Full Address or →">
-              </ion-input>
-              <ion-button *ngIf="!reportForm.controls.address.dirty" fill="clear" (click)="paste()">
-                Paste
-              </ion-button>
-              <ion-button *ngIf="reportForm.controls.address.dirty" fill="clear" color="danger"
-                (click)="reportForm.controls.address.reset()">
-                <ion-icon slot="icon-only" name="close-outline"></ion-icon>
-              </ion-button>
-            </ion-item>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-      <ion-button shape="round" color="success" type="submit" [disabled]="!reportForm.valid">
-        <ion-icon slot="icon-only" name="checkmark-done-outline"></ion-icon>
-      </ion-button>
-    </form>
+    <ion-card *ngFor="let address of nearestOrders; let i = index">
+      <ion-card-header>
+        <ion-card-subtitle>{{ address.address1 }} {{ address.address2 }}<br>{{ address.city }}</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-grid fixed>
+          <ion-row>
+            <ion-col size="6">{{ address.datetimeformatted }}
+            </ion-col>
+            <ion-col size="6">{{ address.reportnumber }}
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
   </div>
 </ion-content>
+<ion-footer class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Logged In?
+    <ion-icon *ngIf=" auth.loggedIn===null" slot="end" name="help" color="warning"></ion-icon>
+    <ion-icon *ngIf="auth.loggedIn" slot="end" name="checkmark" color="success"></ion-icon>
+    <ion-icon *ngIf="!auth.loggedIn && !(auth.loggedIn===null)" slot="end" name="close" color="danger"></ion-icon>
+  </ion-title>
+  <ion-button (click)="logout()" shape="round" fill="outline" color="danger">
+    Logout
+</ion-button>
+  </ion-toolbar>
+</ion-footer>
