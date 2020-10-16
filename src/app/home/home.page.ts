@@ -31,17 +31,21 @@ export class HomePage implements OnInit {
     public auth: AuthService,
     public isn: IsnService
 
-  ) { }
+  ) {
+   }
 
   async ngOnInit() {
     this.back = this.platform.backButton.subscribeWithPriority(1, () => {
       // tslint:disable-next-line: no-string-literal
       navigator['app'].exitApp();
-  });
+    });
+    debugger;
+    console.log('Getting Orders');
+    this.isn.getNearestOrders().then(nearestOrders => this.nearestOrders = nearestOrders);
+
     try {
       const fileURI = this.intentData.value.clipItems[0].uri;
       this.openFile(fileURI);
-      this.nearestOrders = await this.isn.getNearestOrders();
 
     } catch (error) {
       console.error('FileCHECK: ' + error);

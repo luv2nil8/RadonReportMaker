@@ -20,28 +20,48 @@ export class IsnService {
   ) {
     this.userAuth = this.http.getBasicAuthHeader(this.auth.user.key, this.auth.user.secret);
   }
-  checkOK(responseData: any) {
-    return responseData.status === 'ok';
+  checkOK(responseCollection: any) {
+    return responseCollection.status === 'ok';
   }
   dateTimeAfterURL(): string {
     const today = new Date();
-    const dateString = `${today.getDate()}/${today.getMonth()}/${today.getFullYear()}`;
+    const dateString = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`;
     return `/orders?datetimeafter=${dateString}`;
+  }
+
+  async getOrder(ordersItem: any): Promise<any> {
+    const orderURL = `/order/${ordersItem.id}`;
+    try {
+      const orderResponse = await this.http.get(this.env.API_URL + orderURL, {}, this.userAuth);
+      const orderCollection = JSON.parse(orderResponse.data);
+      console.log('ORDER_COLLECTION: ');
+      console.table(orderCollection.order);
+      if (this.checkOK(orderCollection)) {
+        return Promise.resolve(orderCollection.order);
+      } else {
+        return Promise.resolve(false);
+      }
+    } catch (error) {
+      console.error(error);
+      return Promise.resolve(false);
+    }
   }
 
   async getOrders(): Promise<any[]> {
     const resolvedOrders = [];
     try {
       const ordersResponse = await this.http.get(this.env.API_URL + this.dateTimeAfterURL(), {}, this.userAuth);
-      if (this.checkOK(ordersResponse)) {
-        const ordersCollection = JSON.parse(ordersResponse.data);
+      const ordersCollection = JSON.parse(ordersResponse.data);
+      console.log('ORDERS COLLECTION: ');
+      console.table(ordersCollection);
+      if (this.checkOK(ordersCollection)) {
         const orders = ordersCollection.orders;
         await new Promise((resolve) => { // lock until all orders resolve
           let count = 0;
           orders.forEach(async (order) => {
             try {
               const resolvedOrder = await this.getOrder(order);
-              if (resolvedOrder) { resolvedOrders.push(resolvedOrders); }
+              if (resolvedOrder) { resolvedOrders.push(resolvedOrder); }
               if (++count === orders.length) {
                 resolve();
               }
@@ -54,31 +74,18 @@ export class IsnService {
           });
         });
       }
+      console.table(resolvedOrders);
       return Promise.resolve(resolvedOrders);
     } catch (error) {
       return Promise.reject(error);
     }
   }
 
-  async getOrder(ordersItem: any): Promise<any> {
-    const orderURL = `/order${ordersItem.id}`;
-    try {
-      const orderResponse = await this.http.get(this.env.API_URL + orderURL, {}, this.userAuth);
-      if (this.checkOK(orderResponse)) {
-        const orderCollection = JSON.parse(orderResponse.data);
-        return Promise.resolve(orderCollection.order);
-      } else {
-        return Promise.resolve(false);
-      }
-    } catch (error) {
-      console.error(error);
-      return Promise.resolve(false);
-    }
-  }
-
   async getNearestOrders(): Promise<any[]>{
 
     const PositionNow = await this.geolocation.getCurrentPosition();
+    console.log('COORDS: ');
+    console.table(PositionNow.coords);
     const orders = await this.getOrders();
 
     // tslint:disable-next-line: prefer-for-of
@@ -112,7 +119,7 @@ export class IsnService {
       for (const orderEntry of orders){
         console.table(orderEntry);
       }
-      return Promise.resolve(orders.slice(0, orders.length < 10 ? orders.length : 9));
+      return Promise.resolve(orders.slice(0, orders.length < 10 ? orders.length : 10));
     }
   }
 }

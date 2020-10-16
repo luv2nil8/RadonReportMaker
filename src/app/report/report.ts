@@ -46,7 +46,6 @@ export class Report {
         return new Date(DT[year], DT[month], DT[day], DT[hour], DT[min]);
     }
     extractData(): RadonDataSlice[]{
-        debugger;
         const inputString = this.inputString;
         const dataStrings = inputString.match(/\d+.\d+.\d+\s\d*\:\d*:\d*,\s+\d.\d+,\s+\d+,\s+\d+/g);
         const radonData = [];

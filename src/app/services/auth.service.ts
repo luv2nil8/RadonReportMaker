@@ -22,7 +22,7 @@ export class AuthService {
     const headers = this.http.getBasicAuthHeader(user.key, user.secret);
     try {
       const response = await this.http.get(this.env.API_URL + '/me', {} , headers);
-      console.table(JSON.parse(response.data));
+      // console.table(JSON.parse(response.data));
       if (JSON.parse(response.data).status === 'ok'){
         await this.storage.setItem('user', user);
         this.loggedIn = true;
@@ -45,8 +45,8 @@ export class AuthService {
   async checkCredentials(): Promise<boolean> {
     try {
       const user = await this.storage.getItem('user');
-      console.log('User: ' + JSON.stringify(user));
-      console.log('Creds: ' + await this.login(user));
+      // console.log('User: ' + JSON.stringify(user));
+      // console.log('Creds: ' + await this.login(user));
       return Promise.resolve( await this.login(user));
     } catch (error) {
       console.log('GetToken: Error: ' + error);

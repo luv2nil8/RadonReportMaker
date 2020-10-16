@@ -15,10 +15,7 @@ export class AuthGuard implements CanActivate {
   async canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Promise< boolean | UrlTree > {
-    let nav;
-    while (typeof nav !== 'boolean' || nav === null || nav === undefined){
-      nav = await this.auth.checkCredentials();
-    }
+    const nav = await this.auth.checkCredentials();
     console.log('Nav: ' + nav);
     if (nav) { // this is working, checkCredentials or its deps is the problem.
       console.log('Returning True');
