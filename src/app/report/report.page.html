@@ -1,12 +1,20 @@
 <ion-content>
 <div id="container">
-  <p><strong>Saving file: </strong></p>
-  <p>{{ saveLocation }}</p>
-   <br>
-  <canvas #radonCanvas width="1000" height="750"></canvas>
-  <br>
-  <ion-button (click)="doTheThing()" expand="block" color="success">
-    SAVE TO DOWNLOADS FOLDER
-  </ion-button>
+  <app-report *ngIf="!sending"></app-report>
+  <app-uploader *ngIf="sending && !response"></app-uploader>
+  <h3 *ngIf="response">{{ response }}</h3>
+  <ion-footer >
+    <ion-toolbar>
+      <ion-button *ngIf="!sending" (click)="doTheThing()" expand="block" color="success">
+        Upload To ISN
+      </ion-button>
+      <ion-button *ngIf="sending && !response" [disabled]="true" expand="block" color="danger">
+        Finish and Exit
+      </ion-button>
+      <ion-button *ngIf="response" (click)="exit()" expand="block" color="danger">
+        Finish and Exit
+      </ion-button>
+    </ion-toolbar>
+  </ion-footer>
 </div>
 </ion-content>

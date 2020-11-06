@@ -1,3 +1,5 @@
+import { UploaderModule } from './../components/uploader/uploader.module';
+import { ReportModule } from './../components/report/report.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -10,6 +12,8 @@ import { ReportPage } from './report.page';
 @NgModule({
   imports: [
     CommonModule,
+    ReportModule,
+    UploaderModule,
     FormsModule,
     IonicModule,
     ReportPageRoutingModule

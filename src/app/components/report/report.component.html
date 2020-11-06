@@ -1,0 +1,37 @@
+<div class="main">
+<h5>{{ address }}</h5>
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col size="6">
+        <h5>Start:</h5>
+        <span>{{startTimeString}}<!--startTime--></span>
+      </ion-col>
+      <ion-col size="6">
+        <h5>End:</h5>
+        <span>{{endTimeString}}<!--endTime--></span></ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="6">
+        <h5 >Inspector:</h5>
+        <span>{{inspector}}<!--inpsector--></span>
+      </ion-col>
+      <ion-col size="6">
+        <h5 class="h5">Serial:</h5>
+        <span class="h5">{{serial}}<!--serial--></span>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="12">
+        <h4 id="testSpan">
+          {{ passFail }}
+        </h4>
+        <span class="h5">Overall Avg.: {{average}}<!--average--></span>
+        <br />
+        <span 
+          >EPA Protocol Avg.: {{EPAaverage}}<!--EPAaverage--></span>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <canvas #radonCanvas></canvas>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+</div>

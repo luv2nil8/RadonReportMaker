@@ -1,10 +1,8 @@
 import { RadonDataSlice } from './radon-data-slice';
-import { ReportDataService } from '../services/report-data.service';
 
 export class Report {
 
-    public inputString: string; // TODO Make Private When bugs are worked out
-
+    inputString: string;
     address: string;
     startTime: Date;
     endTime: Date;
@@ -17,34 +15,24 @@ export class Report {
 
     constructor(inputString: string){
         this.inputString = inputString;
-        this.createReportData(inputString);
+        this.createReportData();
     }
 
-    createReportData(inputString: string){
+    createReportData(){
 
         this.address = null;
-        this.startTime = this.extractStartDateTime();
         this.inspector = null;
         this.serial = null;
         this.data = this.extractData();
         this.average = this.extractAverage();
         this.EPAaverage = this.extractEPAaverage();
         this.result = this.extractResult();
+        this.startTime = this.data[0].dateTime;
+        console.log(this.startTime);
         this.endTime = this.data[this.data.length < 48  ? this.data.length - 1 : 47 ].dateTime;
         console.log(this.endTime);
     }
 
-    extractStartDateTime(): Date {
-        const month = 0;
-        const day = 1;
-        const year = 2;
-        const hour = 3;
-        const min = 4;
-
-        const startDateStrings = /Date,(.+?\d*\:\d*)/.exec(this.inputString);
-        const DT = startDateStrings[1].split(/\/|\:|\s/).map( dateChunk => parseInt(dateChunk, null) );
-        return new Date(DT[year], DT[month], DT[day], DT[hour], DT[min]);
-    }
     extractData(): RadonDataSlice[]{
         const inputString = this.inputString;
         const dataStrings = inputString.match(/\d+.\d+.\d+\s\d*\:\d*:\d*,\s+\d.\d+,\s+\d+,\s+\d+/g);

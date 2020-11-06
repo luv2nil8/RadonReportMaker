@@ -1,0 +1,29 @@
+ion-spinner {
+    vertical-align: bottom;
+}
+.animate {
+    animation-name: fadeBoth;
+    animation-duration: 2s;
+}
+.last {
+    animation-name: fadeIn;
+    animation-duration: 2s;
+}
+@keyframes fadeBoth {
+    0%  {
+        transform: translate(0px, 100px);
+        opacity: 0%;
+    }
+    75%  {opacity: 100%;}
+    100% {
+        transform: translate(0px, 0px);
+        opacity: 0%;}
+  }
+@keyframes fadeIn {
+    0%  {
+        transform: translate(0px, 100px);
+        opacity: 0%;
+    }
+    100%  {opacity: 100%;}
+
+  }

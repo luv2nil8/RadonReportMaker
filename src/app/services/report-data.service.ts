@@ -6,7 +6,7 @@ import { Report } from '../report/report';
 })
 export class ReportDataService {
   report: Report;
-
+  orderId: number;
   constructor() {
   }
 }

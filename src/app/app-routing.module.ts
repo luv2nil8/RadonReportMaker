@@ -9,11 +9,6 @@ const routes: Routes = [
     canActivate: [ AuthGuard ]
   },
   {
-    path: '',
-    redirectTo: 'home',
-    pathMatch: 'full',
-  },
-  {
     path: 'report',
     loadChildren: () => import('./report/report.module').then( m => m.ReportPageModule)
   },
@@ -21,6 +16,16 @@ const routes: Routes = [
     path: 'login',
     loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
   },
+  {
+    path: 'loading',
+    loadChildren: () => import('./loading/loading.module').then( m => m.LoadingPageModule)
+  },
+  {
+    path: '',
+    redirectTo: 'loading',
+    pathMatch: 'full',
+  },
+
 ];
 
 @NgModule({

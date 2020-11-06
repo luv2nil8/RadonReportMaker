@@ -15,7 +15,18 @@
   </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true">
-  <ion-item *ngFor="let address of nearestOrders; let i = index">
+  <ion-grid fixed *ngIf="!nearestOrders">
+    <ion-row>
+      <ion-col size="1"></ion-col>
+      <ion-col size="10">
+        <h4>Syncing With ISN Orders</h4>
+        <ion-spinner name="dots"></ion-spinner>
+        <h5>If you don't have any orders after several minutes, you may not have permissions, or have not been added to the order you are nearest. <br> Call the office to try and fix this.</h5>
+      </ion-col>
+      <ion-col size="1"></ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-item *ngFor="let address of nearestOrders; let i = index" (click)="fileRead(address)">
     <ion-grid fixed>
       <ion-row>
       <ion-col size="9">
