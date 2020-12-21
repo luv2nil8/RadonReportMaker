@@ -29,7 +29,8 @@ export class DatabaseService {
   }
   dateTimeAfterURL(): string {
     const today = new Date();
-    const dateString = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`;
+    const twoWeeksAgo = new  Date(today.setDate(today.getDate() - 10));
+    const dateString = `${twoWeeksAgo.getMonth() + 1}/${twoWeeksAgo.getDate() }/${twoWeeksAgo.getFullYear()}`;
     return `/orders?datetimeafter=${dateString}`;
   }
 
@@ -93,21 +94,8 @@ export class DatabaseService {
       let newOrderList = await newOrderCollection.orders.map(order => order.id);
       try{
         let oldOrderList = await this.store.getItem('orderList');
-        // tslint:disable-next-line: prefer-for-of
-        /*         for (let i = 0; i < newOrderList.length; i++){
-          for (let j = 0; i < oldOrderList.length; j++){
-            console.log('NewList' + newOrderList[i]);
-            console.log('Old List' + oldOrderList[j]);
-            if (newOrderList[i] === oldOrderList[j]){
-              orderList.push(newOrderList[i]);
-              console.log('orderList' + orderList[i]);
-              newOrderList.slice(i, 1);
-              oldOrderList.slice(j, 1);
-            }
-          }
-        } */
         orderList = this.intersect(newOrderList, oldOrderList);
-        newOrderList = newOrderList.filter(i => !orderList.includes(i.id));
+        newOrderList = newOrderList.filter(i => !orderList.includes(i.id) && (i.cancelled === 'no'));
         oldOrderList = oldOrderList.filter(i => !orderList.includes(i.id));
         await this.store.setItem('orderList', orderList);
         await this.storeNewOrders(newOrderList);
@@ -169,14 +157,14 @@ export class DatabaseService {
     const proximateOrders = orders.filter(order => order.distance < ACCURACY_FILTER);
 
     if (proximateOrders.length > 0) {
-      return Promise.resolve(proximateOrders.slice(0, proximateOrders.length < 10 ? proximateOrders.length : 9));
+      return Promise.resolve(proximateOrders.slice(0, proximateOrders.length < 30 ? proximateOrders.length : 30));
 
     } else {
       console.error('Nothing Within 100 Meters, Defaulting to closest Orders');
       for (const orderEntry of orders){
         console.table(orderEntry);
       }
-      return Promise.resolve(orders.slice(0, orders.length < 10 ? orders.length : 10));
+      return Promise.resolve(orders.slice(0, orders.length < 30 ? orders.length : 30));
     }
   }
 

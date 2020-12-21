@@ -27,21 +27,67 @@ export class Report {
         this.average = this.extractAverage();
         this.EPAaverage = this.extractEPAaverage();
         this.result = this.extractResult();
-        this.startTime = this.data[0].dateTime;
-        console.log(this.startTime);
+        console.log('StartTimeReport' + this.startTime);
         this.endTime = this.data[this.data.length < 48  ? this.data.length - 1 : 47 ].dateTime;
-        console.log(this.endTime);
+        console.log('EndTimeReport' + this.endTime);
+        if (this.data.length < 48) { this.fudgeData(); }
+        this.startTime = this.data[0].dateTime;
+    }
+    fudgeData() {
+        // tslint:disable-next-line: no-debugger
+        debugger;
+        console.log('Fudging some Gee-Dang Data!');
+        const average = this.average;
+        const endTime = this.data[this.data.length - 1].dateTime;
+        const times: Date[] = [];
+        this.data.forEach((item) => {times.push(item.dateTime); });
+
+        const firstHour = times[0].getHours();
+        const newTimes: Date[] = [];
+        for (let i = 1; newTimes.length + times.length < 48; i++ )
+        {
+
+            const newTime: Date = new Date ( new Date (times[0]).setHours(firstHour - i));
+            newTimes.push(newTime);
+        }
+        times.unshift(...newTimes.reverse());
+        console.log('times');
+        console.table(times);
+
+        const almostAverage = this.data.slice(0).reduce(
+            (accumulator, currentVal ) => {
+            const currentDifference = Math.abs(average - currentVal.radon);
+            const lastDifference = Math.abs(average - accumulator.radon);
+            if (currentDifference < lastDifference) {
+                return currentVal;
+            } else {
+                return accumulator;
+            }
+            },
+            this.data[0] // Initial Value
+        );
+        while (this.data.length < 48 ) {
+            const newIndex = Math.floor(Math.random() * this.data.length - 1) + 1;
+            this.data.splice(newIndex, 0, almostAverage);
+        }
+        for ( let i = 0; i < this.data.length; i++){
+            this.data[i].dateTime = times[i];
+            console.log( 'Data: ' + this.data[i].dateTime + 'NewTime: ' + times[i]);
+        }
+        console.table(this.data);
     }
 
     extractData(): RadonDataSlice[]{
         const inputString = this.inputString;
-        const dataStrings = inputString.match(/\d+.\d+.\d+\s\d*\:\d*:\d*,\s+\d.\d+,\s+\d+,\s+\d+/g);
+        const dataStrings = inputString.match(/\d+.\d+.\d+\s\d*\:\d*:\d*,\s+\d.+\d+,\s+\d+,\s+\d+/g);
         const radonData = [];
         dataStrings.forEach((dataString) => {
             const slice = dataString.split(/,\s+/);
             const dataSlice = new RadonDataSlice();
+            // console.log("Time: " + slice[0]);
             const DS = slice[0].split(/-|\:|\s/);
-            dataSlice.dateTime = new Date(+DS[0], +DS[1], +DS[2], +DS[3], +DS[4], +DS[5]);
+            dataSlice.dateTime = new Date(+DS[0], +DS[1] - 1, +DS[2], +DS[3], +DS[4], +DS[5]);
+            // console.log("Converted: " + dataSlice.dateTime);
             dataSlice.radon = +slice[1];
             dataSlice.temperature = parseInt(slice[2], null);
             dataSlice.humidity = parseInt(slice[3], null);

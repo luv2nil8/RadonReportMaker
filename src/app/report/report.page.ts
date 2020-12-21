@@ -35,9 +35,7 @@ export class ReportPage implements OnInit {
   graphData: number[] = [];
   constructor(
     private reportData: ReportDataService,
-    private platform: Platform,
     private http: HTTP,
-    private env: EnvService,
     private auth: AuthService
 
   ) { }
@@ -72,6 +70,7 @@ export class ReportPage implements OnInit {
     let finalReport: any;
     finalReport = this.report;
     finalReport.data = this.report.data.map(dataSlice => dataSlice.radon);
+
     this.http.setDataSerializer('json');
     this.http.post('https://blipfiz.com/api/uploadtoisn',
       {
@@ -90,6 +89,7 @@ export class ReportPage implements OnInit {
     });
   }
   exit(){
+    // tslint:disable-next-line: no-string-literal
     navigator['app'].exitApp();
   }
 }

@@ -12,7 +12,7 @@ export class UploaderComponent implements AfterViewInit {
 
   ngAfterViewInit(){
     const timer = setInterval(() => {
-      console.log('Second: ' + this.item);
+      //console.log('Second: ' + this.item);
       this.item++;
       if (this.item === 9){
         clearInterval(timer);

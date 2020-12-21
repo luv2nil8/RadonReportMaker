@@ -34,15 +34,7 @@ export class HomePage implements OnInit {
 
   async ngOnInit() {
 
-    console.log('Getting Orders');
-    this.database.getNearestOrders().then(
-      nearestOrders => {
-        this.nearestOrders = nearestOrders;
-        if (this.nearestOrders.length === 1 ) {
-          console.table(this.nearestOrders);
-          this.fileRead(this.nearestOrders[0]);
-        }
-      });
+    this.loadOrders();
 
     try {
       const fileURI = this.intentData.value.clipItems[0].uri;
@@ -61,6 +53,23 @@ export class HomePage implements OnInit {
     });
   }
 
+  loadOrders(event?){
+    // console.log('Getting Orders');
+    this.database.getNearestOrders().then(
+      nearestOrders => {
+        // console.log('Done: ');
+        this.nearestOrders = nearestOrders;
+        if (this.nearestOrders.length === 1 ) {
+          // console.table(this.nearestOrders);
+          this.fileRead(this.nearestOrders[0]);
+        }
+        try {
+          event.target.complete();
+        } catch (error) {
+        }
+      });
+  }
+
   async openFile(fileURI) {
     const contents = await Filesystem.readFile({
       path: fileURI,
@@ -74,6 +83,9 @@ export class HomePage implements OnInit {
     console.log(this.auth.loggedIn);
 
   }
+  doRefresh(event){
+    this.loadOrders(event);
+  }
   async fileRead(address) {
 
     try {
@@ -81,6 +93,7 @@ export class HomePage implements OnInit {
       this.reportData.orderId = address.oid;
       this.reportData.report.address = `${address.address1} ${address.address2}, ${address.city}`;
       this.reportData.report.inspector = (await this.auth.getUser()).firstname;
+      console.log('Report: ');
       console.table(this.reportData.report);
       this.back.unsubscribe();
       this.navCtrl.navigateForward('report', {});

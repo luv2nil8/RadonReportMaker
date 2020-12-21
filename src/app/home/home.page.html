@@ -26,6 +26,9 @@
       <ion-col size="1"></ion-col>
     </ion-row>
   </ion-grid>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <ion-item *ngFor="let address of nearestOrders; let i = index" (click)="fileRead(address)">
     <ion-grid fixed>
       <ion-row>
