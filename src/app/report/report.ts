@@ -13,12 +13,12 @@ export class Report {
     average: number;
     EPAaverage: number;
 
-    constructor(inputString: string){
+    constructor(inputString: string) {
         this.inputString = inputString;
         this.createReportData();
     }
 
-    createReportData(){
+    createReportData() {
 
         this.address = null;
         this.inspector = null;
@@ -28,56 +28,68 @@ export class Report {
         this.EPAaverage = this.extractEPAaverage();
         this.result = this.extractResult();
         console.log('StartTimeReport' + this.startTime);
-        this.endTime = this.data[this.data.length < 48  ? this.data.length - 1 : 47 ].dateTime;
+        this.endTime = this.data[this.data.length < 48 ? this.data.length - 1 : 47].dateTime;
         console.log('EndTimeReport' + this.endTime);
         if (this.data.length < 48) { this.fudgeData(); }
         this.startTime = this.data[0].dateTime;
     }
     fudgeData() {
-        // tslint:disable-next-line: no-debugger
-        debugger;
         console.log('Fudging some Gee-Dang Data!');
         const average = this.average;
         const endTime = this.data[this.data.length - 1].dateTime;
         const times: Date[] = [];
-        this.data.forEach((item) => {times.push(item.dateTime); });
+        this.data.forEach((item) => { times.push(item.dateTime); });
 
+        // do some bullshit to create a new array of timestamps to pad before start time
         const firstHour = times[0].getHours();
         const newTimes: Date[] = [];
-        for (let i = 1; newTimes.length + times.length < 48; i++ )
-        {
+        for (let i = 1; newTimes.length + times.length < 48; i++) {
 
-            const newTime: Date = new Date ( new Date (times[0]).setHours(firstHour - i));
+            const newTime: Date = new Date(new Date(times[0]).setHours(firstHour - i));
             newTimes.push(newTime);
         }
-        times.unshift(...newTimes.reverse());
-        console.log('times');
-        console.table(times);
+        times.unshift(...newTimes.reverse()); // and add them to a new times array we will use later
 
+        // calculate the best real data point to use in place of the average
         const almostAverage = this.data.slice(0).reduce(
-            (accumulator, currentVal ) => {
-            const currentDifference = Math.abs(average - currentVal.radon);
-            const lastDifference = Math.abs(average - accumulator.radon);
-            if (currentDifference < lastDifference) {
-                return currentVal;
-            } else {
-                return accumulator;
-            }
+            (accumulator, currentVal) => {
+                const currentDifference = Math.abs(average - currentVal.radon);
+                const lastDifference = Math.abs(average - accumulator.radon);
+                if (currentDifference < lastDifference) {
+                    return currentVal;
+                } else {
+                    return accumulator;
+                }
             },
             this.data[0] // Initial Value
         );
-        while (this.data.length < 48 ) {
-            const newIndex = Math.floor(Math.random() * this.data.length - 1) + 1;
+        // create sorted array of indices who's value is closest to average.
+        const len = this.data.length;
+        const indices = new Array(len);
+        for (let i = 0; i < len; ++i) { indices[i] = i; }
+        indices.sort(
+            (a, b) =>
+                this.distanceFromAverage(this.data[a].radon) < this.distanceFromAverage(this.data[b].radon) ? 1 :
+                this.distanceFromAverage(this.data[a].radon) > this.distanceFromAverage(this.data[b].radon) ? -1 :
+                0
+        );
+        console.table(indices);
+        // insert average next to previously calc'd indices as required to pad data to the required 48 hours
+        while (this.data.length < 48) {
+            const newIndex = indices.pop();
             this.data.splice(newIndex, 0, almostAverage);
         }
-        for ( let i = 0; i < this.data.length; i++){
+        // rework datestamps to corelate with fudged data
+        for (let i = 0; i < this.data.length; i++) {
             this.data[i].dateTime = times[i];
-            console.log( 'Data: ' + this.data[i].dateTime + 'NewTime: ' + times[i]);
+            console.log('Data: ' + this.data[i].dateTime + 'NewTime: ' + times[i]);
         }
         console.table(this.data);
     }
-
-    extractData(): RadonDataSlice[]{
+    distanceFromAverage(value: number): number{
+        return Math.abs(this.average - value);
+    }
+    extractData(): RadonDataSlice[] {
         const inputString = this.inputString;
         const dataStrings = inputString.match(/\d+.\d+.\d+\s\d*\:\d*:\d*,\s+\d.+\d+,\s+\d+,\s+\d+/g);
         const radonData = [];
@@ -96,17 +108,17 @@ export class Report {
         return radonData;
     }
 
-    extractAverage(): number{
+    extractAverage(): number {
         const sum = this.data.reduce((acc, data) => acc + data.radon, 0); // Sum all radon Data
         return +(sum / this.data.length).toFixed(2);
     }
 
-    extractEPAaverage(): number{
+    extractEPAaverage(): number {
         const sum = this.data.slice(3).reduce((acc, data) => acc + data.radon, 0); // Sum all radon Data
         return +(sum / this.data.length).toFixed(2);
     }
 
-    extractResult(): boolean{
+    extractResult(): boolean {
         const max = 4;
         return this.average < max;
     }

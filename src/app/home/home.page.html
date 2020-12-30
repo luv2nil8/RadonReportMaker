@@ -1,17 +1,14 @@
 <ion-header class="ion-no-border">
   
   <ion-toolbar>
-    <ion-buttons slot="primary">
-      <ion-button (click)="logout()" shape="round" fill="outline" color="danger">
-        Logout
-      </ion-button>
-    </ion-buttons>
-    <ion-buttons slot="secondary">
-      <ion-icon *ngIf=" auth.loggedIn===null" slot="icon-only" name="help" color="warning"></ion-icon>
-      <ion-icon *ngIf="auth.loggedIn" slot="icon-only" name="checkmark" color="success"></ion-icon>
-      <ion-icon *ngIf="!auth.loggedIn && !(auth.loggedIn===null)" slot="icon-only" name="close" color="danger"></ion-icon>
-    </ion-buttons>
-    <ion-title>Logged In: </ion-title>
+    <ion-searchbar 
+      debounce="500"
+      showCancelButton="focus"
+      placeholder="Search Invoice Numbers"
+      (ionCancel)="searchCancel($event)"
+      (ionClear)="searchClear($event)"
+      (ionChange)="searchChange($event)"
+    ></ion-searchbar>
   </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true">
@@ -45,4 +42,9 @@
       </ion-row>
     </ion-grid>
   </ion-item>
+  <ion-fab vertical="bottom" horizontal="start" slot="fixed">
+    <ion-fab-button  color="danger">
+      <ion-icon name="log-out" (click)="logout()"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

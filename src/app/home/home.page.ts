@@ -5,7 +5,7 @@ import { IntentDataService } from '../services/intent-data.service';
 import { Plugins, FilesystemEncoding } from '@capacitor/core';
 const { Filesystem } = Plugins;
 import { Report } from '../report/report';
-import { NavController, Platform } from '@ionic/angular';
+import { ModalController, NavController, Platform } from '@ionic/angular';
 import { ReportDataService } from '../services/report-data.service';
 
 
@@ -20,7 +20,7 @@ export class HomePage implements OnInit {
   fileContents: string;
   nearestOrders: any[];
   back: any;
-
+  orders: any;
   constructor(
     private intentData: IntentDataService,
     private reportData: ReportDataService,
@@ -58,7 +58,8 @@ export class HomePage implements OnInit {
     this.database.getNearestOrders().then(
       nearestOrders => {
         // console.log('Done: ');
-        this.nearestOrders = nearestOrders;
+        this.orders = nearestOrders;
+        this.nearestOrders = this.orders;
         if (this.nearestOrders.length === 1 ) {
           // console.table(this.nearestOrders);
           this.fileRead(this.nearestOrders[0]);
@@ -83,6 +84,21 @@ export class HomePage implements OnInit {
     console.log(this.auth.loggedIn);
 
   }
+  searchCancel(){
+    console.log('SearchCancel');
+    this.nearestOrders = this.orders;
+
+  }
+  searchClear(){
+    console.log('SearchClear');
+  }
+  async searchChange($event){
+    console.log('SeachInput');
+    console.table($event);
+    const criteria = $event.detail.value;
+    this.nearestOrders = await this.database.searchOrders(criteria);
+  }
+
   doRefresh(event){
     this.loadOrders(event);
   }

@@ -38,7 +38,7 @@ export class DatabaseService {
     let count = 0;
     const orders = await this.store.getItem('orders');
     const oldOrderList = await this.store.getItem('orderList');
-    await new Promise((resolve) => {
+    await new Promise<void>((resolve) => {
       orderList.forEach(async (orderID) => {
         orders.splice(orders.findIndex(orderItem =>  orderItem.id === orderID ), 1);
       });
@@ -70,7 +70,7 @@ export class DatabaseService {
   async storeNewOrders(orderList: string[]){
     let count = 0;
     const orders = [];
-    await new Promise((resolve) => {
+    await new Promise<void>((resolve) => {
       orderList.forEach(async (orderID) => {
         const orderItem =  await this.getOrder(orderID);
         if (orderItem){
@@ -122,7 +122,6 @@ export class DatabaseService {
       } catch (error) {
         console.error(error);
       }
-
       console.log(error);
       Promise.reject();
     }
@@ -166,6 +165,19 @@ export class DatabaseService {
       }
       return Promise.resolve(orders.slice(0, orders.length < 30 ? orders.length : 30));
     }
+  }
+  async searchOrders(criteria: string): Promise<any[]>{
+    try {
+      const resolvedOrders = await this.store.getItem('orders');
+      const filteredOrders = resolvedOrders.filter((order) => {
+        const regex = new RegExp(criteria, 'g');
+        return order.reportnumber.match(regex) === null ? false : true;
+      });
+      return Promise.resolve(filteredOrders);
+    } catch (error) {
+      Promise.reject();
+    }
+
   }
 
 }
