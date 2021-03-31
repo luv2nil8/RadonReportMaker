@@ -99,7 +99,7 @@ export class DatabaseService {
         oldOrderList = oldOrderList.filter(i => !orderList.includes(i.id));
         await this.store.setItem('orderList', orderList);
         await this.storeNewOrders(newOrderList);
-        this.deleteOldOrders(oldOrderList);
+        // this.deleteOldOrders(oldOrderList);
         return Promise.resolve(orderList);
       } catch (error) {
         console.log(error);
@@ -168,16 +168,35 @@ export class DatabaseService {
   }
   async searchOrders(criteria: string): Promise<any[]>{
     try {
-      const resolvedOrders = await this.store.getItem('orders');
-      const filteredOrders = resolvedOrders.filter((order) => {
-        const regex = new RegExp(criteria, 'g');
-        return order.reportnumber.match(regex) === null ? false : true;
+      const addressSearchResponse = await this.http.get(this.env.API_URL + `/orders/search?address1=${criteria}`, {}, this.headers);
+      const orderSearchResponse = await this.http.get(this.env.API_URL + `/orders/search?reportnumber=${criteria}`, {}, this.headers);
+
+      let addressOrders = JSON.parse(addressSearchResponse.data);
+      console.table(addressOrders);
+      addressOrders = addressOrders.orders.map(order => order.id);
+
+      let orderNumOrders = JSON.parse(orderSearchResponse.data);
+      console.table(orderNumOrders);
+      orderNumOrders = orderNumOrders.orders.map(order => order.id);
+
+      const searchOrders = addressOrders.concat(orderNumOrders.data);
+      searchOrders.slice(0, 9);
+      let count = 0;
+      const orders = [];
+      await new Promise<void>((resolve) => {
+        searchOrders.forEach(async (orderID) => {
+          const orderItem =  await this.getOrder(orderID);
+          if (orderItem){
+            orders.push(orderItem);
+          }
+          if (++count >= searchOrders.length ){
+            resolve();
+          }
+        });
       });
-      return Promise.resolve(filteredOrders);
+      return Promise.resolve(orders);
     } catch (error) {
       Promise.reject();
     }
-
   }
-
 }

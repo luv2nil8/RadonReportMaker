@@ -1,3 +1,4 @@
+import { SerialWaitingPopoverComponent } from './../components/popovers/serial-waiting-popover/serial-waiting-popover.component';
 import { DatabaseService } from './../services/database.service';
 import { AuthService } from './../services/auth.service';
 import { Component, OnInit } from '@angular/core';
@@ -5,7 +6,7 @@ import { IntentDataService } from '../services/intent-data.service';
 import { Plugins, FilesystemEncoding } from '@capacitor/core';
 const { Filesystem } = Plugins;
 import { Report } from '../report/report';
-import { ModalController, NavController, Platform } from '@ionic/angular';
+import { ModalController, NavController, Platform, PopoverController } from '@ionic/angular';
 import { ReportDataService } from '../services/report-data.service';
 
 
@@ -17,7 +18,7 @@ import { ReportDataService } from '../services/report-data.service';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
-  fileContents: string;
+  fileContents = '';
   nearestOrders: any[];
   back: any;
   orders: any;
@@ -27,7 +28,8 @@ export class HomePage implements OnInit {
     private navCtrl: NavController,
     private platform: Platform,
     public auth: AuthService,
-    private database: DatabaseService
+    private database: DatabaseService,
+    private popover: PopoverController
 
   ) {
    }
@@ -38,7 +40,9 @@ export class HomePage implements OnInit {
 
     try {
       const fileURI = this.intentData.value.clipItems[0].uri;
-      this.openFile(fileURI);
+      if (fileURI) {
+        this.openFile(fileURI);
+      }
 
 
     } catch (error) {
@@ -87,25 +91,40 @@ export class HomePage implements OnInit {
   searchCancel(){
     console.log('SearchCancel');
     this.nearestOrders = this.orders;
-
   }
+
   searchClear(){
     console.log('SearchClear');
+    this.nearestOrders = this.orders;
   }
+
   async searchChange($event){
-    console.log('SeachInput');
     console.table($event);
     const criteria = $event.detail.value;
-    this.nearestOrders = await this.database.searchOrders(criteria);
+    if (criteria.length === 0 ) { this.searchCancel(); }
+    if (criteria.length >= 3){
+      delete this.nearestOrders;
+      this.nearestOrders = await this.database.searchOrders(criteria);
+    }
   }
 
   doRefresh(event){
     this.loadOrders(event);
   }
-  async fileRead(address) {
 
+  async fileRead(address) {
     try {
-      this.reportData.report = new Report(this.fileContents);
+      if (this.fileContents === '') {
+        const popover = await this.popover.create({
+          component: SerialWaitingPopoverComponent,
+          componentProps: {
+            date: address.datetime
+          }
+        });
+        popover.present();
+      } else {
+        this.reportData.report = new Report(this.fileContents);
+      }
       this.reportData.orderId = address.oid;
       this.reportData.report.address = `${address.address1} ${address.address2}, ${address.city}`;
       this.reportData.report.inspector = (await this.auth.getUser()).firstname;

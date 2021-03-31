@@ -1,3 +1,4 @@
+import { SerialWaitingPopoverComponent } from './../components/popovers/serial-waiting-popover/serial-waiting-popover.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
@@ -9,6 +10,9 @@ import { HomePageRoutingModule } from './home-routing.module';
 
 
 @NgModule({
+  entryComponents: [
+    SerialWaitingPopoverComponent
+  ],
   imports: [
     CommonModule,
     ReactiveFormsModule,

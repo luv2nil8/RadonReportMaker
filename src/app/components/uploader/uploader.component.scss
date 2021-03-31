@@ -1,29 +1,32 @@
 ion-spinner {
     vertical-align: bottom;
 }
-.animate {
-    animation-name: fadeBoth;
-    animation-duration: 2s;
-}
-.last {
+.fadeIn {
     animation-name: fadeIn;
-    animation-duration: 2s;
+    animation-duration: 1s;
+
 }
-@keyframes fadeBoth {
-    0%  {
-        transform: translate(0px, 100px);
-        opacity: 0%;
-    }
-    75%  {opacity: 100%;}
-    100% {
-        transform: translate(0px, 0px);
-        opacity: 0%;}
-  }
+.fadeOut {
+    animation-name: fadeOut;
+    animation-duration: 1s;
+    display: none;
+
+}
 @keyframes fadeIn {
     0%  {
+        display: block;
         transform: translate(0px, 100px);
         opacity: 0%;
     }
     100%  {opacity: 100%;}
-
-  }
+}
+@keyframes fadeOut {
+    0%  { opacity: 100%; }
+    99%  { 
+        opacity: 0%; 
+        transform: translate(0px, -100px);
+    }
+    100% { 
+        display: none;
+    }
+}

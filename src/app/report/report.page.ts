@@ -1,16 +1,13 @@
+import { FileHandlerService } from './../services/file-handler.service';
 import { AuthService } from './../services/auth.service';
-import { EnvService } from './../services/env.service';
-import { HTTP } from '@ionic-native/http/ngx';
-import { Platform } from '@ionic/angular';
-import { Component, ViewChild, OnInit, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, OnInit, ElementRef } from '@angular/core';
 import { Report } from './report';
 import { ReportDataService } from '../services/report-data.service';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
-import { Plugins, FilesystemDirectory } from '@capacitor/core';
-const { Filesystem } = Plugins;
 import { Chart } from 'chart.js';
+import { Observable } from 'rxjs/Observable';
 
 
 @Component({
@@ -25,22 +22,33 @@ export class ReportPage implements OnInit {
 
   radonChart: Chart;
   context: CanvasRenderingContext2D;
-
+  socket: WebSocket;
+  connected = false;
   sending = false;
-  response = '';
+  finished = false;
+  pdf = false;
   report: Report;
   pdfObj: any;
   saveLocation: string;
   readings: any[] = [[{ colSpan: 12, text: 'Hourly Readings:' }, '', '', '', '', '', '', '', '', '', '', '']];
   graphData: number[] = [];
+  messages: string[] = ['Making Pdf from Data.'];
+  messagesObservable: Observable<string[]>;
+  hidden = false;
+  interval;
+
+
   constructor(
     private reportData: ReportDataService,
-    private http: HTTP,
-    private auth: AuthService
+    private auth: AuthService,
+    private fileHandler: FileHandlerService
 
-  ) { }
+  ) {
+
+  }
 
   ngOnInit() {
+    this.reconnect();
     this.report = this.reportData.report;
     console.table(this.report.data);
     this.saveLocation = this.report.address.trim().replace(/\s|,|-|\.|\/|\\,/g, '_').replace(/\_+/g, '_') + '.pdf';
@@ -58,8 +66,64 @@ export class ReportPage implements OnInit {
       this.graphData = graphData;
     }
   }
+  reconnect(){
+    this.interval = setInterval(() => {
+      console.log('Trying Socket');
+      if (!this.socket){
+        this.socket = new WebSocket('ws://blipfiz.com:3000');
+      }
+      if (this.socket.readyState === 1 ){
+        console.log('Connected!');
+        this.connected = true;
+        clearInterval(this.interval);
+      }else if (this.socket.readyState === 0){
+        console.log('Connecting');
+      }else if (this.socket.readyState === 2){
+        console.log('Closing');
+      }else{
+        console.log('Not Connected');
+        delete this.socket;
+      }
+    }, 500);
+  }
+  getMessages(): Observable<string[]>{
+    const observableMessage: Observable<string[]> = new Observable(observer => {
+      observer.next(this.messages);
+      this.socket.onmessage = (message) => {
+        const packet = message.data;
+        if ( packet instanceof Blob ) {
+          try {
+            this.fileHandler.savePDFBlob(this.saveLocation, packet );
+            console.log('Pdf Saved to ' + this.saveLocation);
+            observer.next(this.messages);
+            this.pdf = true;
+          }catch (error){
+            this.messages.push(error);
+            console.error(error);
+          }
+          this.closeSocket();
 
-  doTheThing(){
+        } else {
+          this.messages.push(packet);
+          observer.next(this.messages);
+        }
+      };
+      this.socket.onclose = () => {
+         console.log('Socket Self Closed');
+         this.closeSocket();
+      };
+    });
+    return observableMessage;
+  }
+  closeSocket() {
+    this.connected = false;
+    this.finished = true;
+    console.log('Closing Socket');
+    this.socket.close();
+    this.reconnect();
+  }
+
+  uploadReport(){
     this.sending = true;
     console.table( {
       key: this.auth.credentials.key,
@@ -70,26 +134,19 @@ export class ReportPage implements OnInit {
     let finalReport: any;
     finalReport = this.report;
     finalReport.data = this.report.data.map(dataSlice => dataSlice.radon);
-
-    this.http.setDataSerializer('json');
-    this.http.post('https://blipfiz.com/api/uploadtoisn',
-      {
-        key: this.auth.credentials.key ,
-        secret: this.auth.credentials.secret,
-        oid: this.reportData.orderId,
-        report: this.report
-      },
-      {}
-    ).then((res) => {
-      if (JSON.parse(res.data).success) {
-        this.response = 'Report Uploaded, Emails Sent!';
-      } else {
-        this.response = 'Error: ' + JSON.parse(res.data).response;
-      }
-    });
+    this.socket.send( JSON.stringify({
+      key: this.auth.credentials.key ,
+      secret: this.auth.credentials.secret,
+      oid: this.reportData.orderId,
+      report: this.report
+    }));
   }
   exit(){
     // tslint:disable-next-line: no-string-literal
     navigator['app'].exitApp();
+  }
+  ionViewWillLeave() {
+    clearInterval(this.interval);
+    this.closeSocket();
   }
 }

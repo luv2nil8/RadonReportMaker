@@ -96,10 +96,8 @@ export class Report {
         dataStrings.forEach((dataString) => {
             const slice = dataString.split(/,\s+/);
             const dataSlice = new RadonDataSlice();
-            // console.log("Time: " + slice[0]);
             const DS = slice[0].split(/-|\:|\s/);
             dataSlice.dateTime = new Date(+DS[0], +DS[1] - 1, +DS[2], +DS[3], +DS[4], +DS[5]);
-            // console.log("Converted: " + dataSlice.dateTime);
             dataSlice.radon = +slice[1];
             dataSlice.temperature = parseInt(slice[2], null);
             dataSlice.humidity = parseInt(slice[3], null);

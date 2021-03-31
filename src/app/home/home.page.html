@@ -1,9 +1,10 @@
 <ion-header class="ion-no-border">
   
   <ion-toolbar>
-    <ion-searchbar 
+    <ion-searchbar
       debounce="500"
-      showCancelButton="focus"
+      showCancelButton="never"
+      enterkeyhint="search"
       placeholder="Search Invoice Numbers"
       (ionCancel)="searchCancel($event)"
       (ionClear)="searchClear($event)"
@@ -16,7 +17,7 @@
     <ion-row>
       <ion-col size="1"></ion-col>
       <ion-col size="10">
-        <h4>Syncing With ISN Orders</h4>
+        <h4>Searching ISN Orders</h4>
         <ion-spinner name="dots"></ion-spinner>
         <h5>If you don't have any orders after several minutes, you may not have permissions, or have not been added to the order you are nearest. <br> Call the office to try and fix this.</h5>
       </ion-col>

@@ -1,20 +1,25 @@
 <ion-content>
 <div id="container">
   <app-report *ngIf="!sending"></app-report>
-  <app-uploader *ngIf="sending && !response"></app-uploader>
-  <h3 *ngIf="response">{{ response }}</h3>
-  <ion-footer >
-    <ion-toolbar>
-      <ion-button *ngIf="!sending" (click)="doTheThing()" expand="block" color="success">
-        Upload To ISN
-      </ion-button>
-      <ion-button *ngIf="sending && !response" [disabled]="true" expand="block" color="danger">
-        Finish and Exit
-      </ion-button>
-      <ion-button *ngIf="response" (click)="exit()" expand="block" color="danger">
-        Finish and Exit
-      </ion-button>
-    </ion-toolbar>
-  </ion-footer>
+  <app-uploader *ngIf="sending" [messages]='getMessages()'></app-uploader>
 </div>
 </ion-content>
+<ion-footer >
+  <ion-toolbar>
+    <ion-button *ngIf="!connected && !sending" [disabled]="true" expand="block" color="success">
+      Trying to Connect <ion-spinner name="bubbles"></ion-spinner>
+    </ion-button>
+    <ion-button *ngIf="connected &&!sending" (click)="uploadReport()" expand="block" color="success">
+      Upload To ISN
+    </ion-button>
+    <ion-button *ngIf="sending && !finished" [disabled]="true" expand="block" color="danger">
+      Finish and Exit
+    </ion-button>
+    <ion-button *ngIf="finished && !pdf" (click)="exit()" expand="block" color="danger">
+      Finish and Exit
+    </ion-button>
+    <ion-button *ngIf="pdf" (click)="exit()" expand="block" color="secondary">
+      PDF Saved to Downloads! (Done)
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>
