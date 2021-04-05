@@ -37,12 +37,12 @@ export class LoginPage implements OnInit {
     this.reportForm.controls.username.valueChanges.subscribe( val => {
       this.badCredentials = false;
       this.username = val;
-      console.log(this.username);
+
     });
     this.reportForm.controls.password.valueChanges.subscribe( val => {
       this.badCredentials = false;
       this.password = val;
-      console.log(this.password);
+
 
     });
 

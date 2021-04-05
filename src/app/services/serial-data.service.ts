@@ -10,16 +10,16 @@ export class SerialDataService {
     private serial: Serial
   ){}
 
-  getPermission(): Promise<any>{
-    return this.serial.requestPermission({
+  async getPermission(){
+    return await this.serial.requestPermission({
       //  Blue cord Id and Driver
       vid: '067b',
       pid: '2303',
       driver: 'ProlificSerialDriver'
     });
   }
-  openPort(): Promise<any> {
-    return this.serial.open({
+  async openPort(): Promise<any> {
+    return await this.serial.open({
       baudRate: 1200,
       dataBits: 8,
       stopBits: 1,
@@ -32,8 +32,6 @@ export class SerialDataService {
   readPort(): BehaviorSubject<number[]>{
     const streamBS: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([]);
     try {
-      this.getPermission();
-      this.openPort();
       let stream = '';
       const floats = [];
       const read =  this.serial.registerReadCallback()
@@ -50,6 +48,7 @@ export class SerialDataService {
               if (/^\d+\.\d+/.test(group) && !(group === '')) {
                   floats.push(parseFloat(group));
                   stream = '';
+                  // console.log(floats);
                   streamBS.next(floats);
               }
 
@@ -76,5 +75,6 @@ export class SerialDataService {
     }
     return streamBS;
   }
+
 
 }

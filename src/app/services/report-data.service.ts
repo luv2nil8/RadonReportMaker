@@ -11,24 +11,23 @@ export class ReportDataService {
   }
   convertSerialData(values: number[], dateString: string){
     const DS = dateString.split(/-|\:|\s/);
-    console.log('DS: ');
     console.table(DS);
     DS[1] = `${parseInt(DS[1], 10) - 1}`; // convert month from zero index
     let date: Date = new (Date as any)(...DS);
     let stream = '';
     if (this.sameDay(date, new Date())){
-      console.log('Within the day');
       date = new Date(date.setDate(date.getDate() - 2));
     }
     let i = 1;
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const hour = date.getHours();
-    const minute = date.getMinutes();
+
     for (const value of values){
-      console.log(`${i++}) ${year}-${month}-${day} ${hour}:${minute}:00, ${value}, 0, 0 \n`);
-      stream += `${i++}) ${year}-${month}-${day} ${hour}:${minute}:00, ${value}, 0, 0 \n`;
+      const year = date.getFullYear();
+      const month = date.getMonth();
+      const day = date.getDate();
+      const hour = date.getHours();
+      const minute = date.getMinutes();
+      stream += `${i++}) ${year}-${this.pad(month + 1)}-${this.pad(day)} ${this.pad(hour)}:${this.pad(minute)}:00, ${value.toFixed(1)}, 0, 0 \n`;
+      date = new Date(date.setHours(date.getHours() + 1));
     }
     this.report = new Report(stream);
   }
@@ -36,5 +35,8 @@ export class ReportDataService {
     return d1.getFullYear() === d2.getFullYear() &&
       d1.getMonth() === d2.getMonth() &&
       d1.getDate() === d2.getDate();
+  }
+  pad(digit: number){
+    return (digit).toString().padStart(2, '0');
   }
 }

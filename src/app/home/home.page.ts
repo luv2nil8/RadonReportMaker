@@ -58,14 +58,11 @@ export class HomePage implements OnInit {
   }
 
   loadOrders(event?){
-    // console.log('Getting Orders');
     this.database.getNearestOrders().then(
       nearestOrders => {
-        // console.log('Done: ');
         this.orders = nearestOrders;
         this.nearestOrders = this.orders;
         if (this.nearestOrders.length === 1 ) {
-          // console.table(this.nearestOrders);
           this.fileRead(this.nearestOrders[0]);
         }
         try {
@@ -85,16 +82,15 @@ export class HomePage implements OnInit {
 
   logout(){
     this.auth.logout();
-    console.log(this.auth.loggedIn);
 
   }
   searchCancel(){
-    console.log('SearchCancel');
+
     this.nearestOrders = this.orders;
   }
 
   searchClear(){
-    console.log('SearchClear');
+
     this.nearestOrders = this.orders;
   }
 
@@ -117,24 +113,35 @@ export class HomePage implements OnInit {
       if (this.fileContents === '') {
         const popover = await this.popover.create({
           component: SerialWaitingPopoverComponent,
+          backdropDismiss: false,
           componentProps: {
             date: address.datetime
-          }
+          },
+          cssClass: 'serial-waiting-popover'
         });
         popover.present();
+        popover.onDidDismiss().then( async () => {
+          this.setReportDataAndNav(address);
+        });
+
       } else {
         this.reportData.report = new Report(this.fileContents);
+        this.setReportDataAndNav(address);
       }
-      this.reportData.orderId = address.oid;
-      this.reportData.report.address = `${address.address1} ${address.address2}, ${address.city}`;
-      this.reportData.report.inspector = (await this.auth.getUser()).firstname;
-      console.log('Report: ');
-      console.table(this.reportData.report);
-      this.back.unsubscribe();
-      this.navCtrl.navigateForward('report', {});
+
     } catch (error) {
       console.error(error);
 
     }
   }
+  async setReportDataAndNav(address){
+    this.reportData.orderId = address.oid;
+    this.reportData.report.address = `${address.address1} ${address.address2}, ${address.city}`;
+    this.reportData.report.inspector = (await this.auth.getUser()).firstname;
+    ('Report: ');
+    console.table(this.reportData.report);
+    this.back.unsubscribe();
+    this.navCtrl.navigateForward('report', {});
+  }
+
 }

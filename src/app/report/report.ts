@@ -27,16 +27,12 @@ export class Report {
         this.average = this.extractAverage();
         this.EPAaverage = this.extractEPAaverage();
         this.result = this.extractResult();
-        console.log('StartTimeReport' + this.startTime);
         this.endTime = this.data[this.data.length < 48 ? this.data.length - 1 : 47].dateTime;
-        console.log('EndTimeReport' + this.endTime);
         if (this.data.length < 48) { this.fudgeData(); }
         this.startTime = this.data[0].dateTime;
     }
     fudgeData() {
-        console.log('Fudging some Gee-Dang Data!');
         const average = this.average;
-        const endTime = this.data[this.data.length - 1].dateTime;
         const times: Date[] = [];
         this.data.forEach((item) => { times.push(item.dateTime); });
 
@@ -73,7 +69,6 @@ export class Report {
                 this.distanceFromAverage(this.data[a].radon) > this.distanceFromAverage(this.data[b].radon) ? -1 :
                 0
         );
-        console.table(indices);
         // insert average next to previously calc'd indices as required to pad data to the required 48 hours
         while (this.data.length < 48) {
             const newIndex = indices.pop();
@@ -82,9 +77,7 @@ export class Report {
         // rework datestamps to corelate with fudged data
         for (let i = 0; i < this.data.length; i++) {
             this.data[i].dateTime = times[i];
-            console.log('Data: ' + this.data[i].dateTime + 'NewTime: ' + times[i]);
         }
-        console.table(this.data);
     }
     distanceFromAverage(value: number): number{
         return Math.abs(this.average - value);

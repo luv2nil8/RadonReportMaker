@@ -53,11 +53,8 @@ export class AuthService {
   async checkCredentials(): Promise<boolean> {
     try {
       const credentials = await this.storage.getItem('credentials');
-      // console.log('User: ' + JSON.stringify(user));
-      // console.log('Creds: ' + await this.login(user));
       return Promise.resolve( await this.login(credentials));
     } catch (error) {
-      console.log('GetToken: Error: ' + error);
       return Promise.resolve(false);
     }
   }

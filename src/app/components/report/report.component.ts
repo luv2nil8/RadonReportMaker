@@ -28,14 +28,10 @@ export class ReportComponent implements AfterViewInit {
   constructor(
     private radon: ReportDataService
   ) {
-    // console.log('RadonData: ');
-    // console.table(this.radon.report);
     this.address = this.radon.report.address;
     let date = this.radon.report.startTime;
-    console.log('StartTimePage:' + date.toDateString());
     this.startTimeString = `${String(date.getMonth() + 1).padStart(2, '0')}\/${String(date.getDate()).padStart(2, '0')}\/${date.getFullYear()}  ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
     date = this.radon.report.endTime;
-    console.log('EndTimePage:' + date.toDateString());
     this.endTimeString = `${String(date.getMonth() + 1).padStart(2, '0')}\/${String(date.getDate()).padStart(2, '0')}\/${date.getFullYear()}  ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
     this.inspector = this.radon.report.inspector;
     this.serial = this.radon.report.serial;

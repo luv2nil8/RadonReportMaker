@@ -14,9 +14,7 @@ export class FileHandlerService {
 
   ) { }
   async getPermission(permission: AndroidPermissionResponse){
-    console.log('Has permission?', permission.hasPermission);
     if (permission.hasPermission){
-      console.log('Has permission');
     }else {
       await this.androidPermissions.requestPermission( this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE);
     }

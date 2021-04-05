@@ -78,7 +78,6 @@ export class DatabaseService {
         }
         if (++count >= orderList.length ){
           await this.store.setItem('orders', orders);
-          console.log('Stored: ' );
           console.table(orderItem);
           resolve();
         }
@@ -102,7 +101,7 @@ export class DatabaseService {
         // this.deleteOldOrders(oldOrderList);
         return Promise.resolve(orderList);
       } catch (error) {
-        console.log(error);
+        console.error(error);
         await this.storeNewOrders(newOrderList);
         await this.store.setItem('orderList', newOrderList);
       }
@@ -122,7 +121,7 @@ export class DatabaseService {
       } catch (error) {
         console.error(error);
       }
-      console.log(error);
+      console.error(error);
       Promise.reject();
     }
     this.syncOrders();
@@ -133,7 +132,6 @@ export class DatabaseService {
   async getNearestOrders(): Promise<any[]>{
     const credentials = (await this.auth.getCredentials());
     this.headers = this.http.getBasicAuthHeader(credentials.key, credentials.secret);
-    console.log('Headers: ' + this.headers);
     const PositionNow = await this.geolocation.getCurrentPosition();
     const orders = await this.getOrders();
 

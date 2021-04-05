@@ -1,12 +1,29 @@
-<ion-content>
-  <h3>If you meant to share data from the RadonEye App, close this app and do that now, otherwise, connect a SunNuclear 1027 with serial cable and retry.</h3>
-  <ion-item lines="none">
-    <label>Hourly Readings: </label>
-  </ion-item>
-  <ion-item lines="none">
-    <ion-row *ngIf="values">
+  
+  <ion-header>
+    <ion-toolbar>
+      <ion-button slot="end" fill="clear" color="danger" (click)="close()">
+        <ion-icon slot="icon-only" name="close-circle"></ion-icon>
+      </ion-button>
+      <ion-title>Data Download</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+    <ion-item>
+      <ion-text *ngIf="!connected" color="dark">
+        <p>Please connect a Monitor.</p>
+        <p>(If you meant to get data from a RadonEYE, close this app, and download from the RadonEye app, then share it to this app when you save the data.)</p>
+      </ion-text>
+      <ion-text *ngIf="connected && !progress" color="dark">
+        <p>Please print from Monitor.</p>
+      </ion-text>
+      <ion-text *ngIf="progress" color="dark">
+        <p>Downloading data from Monitor, please wait!</p>
+      </ion-text>
+    </ion-item>
+
+    <ion-row *ngIf="values.length" lines="none" class="data">
         <ion-col size="1" *ngFor="let item of values;">{{ formatString(item) }}</ion-col>
-        <ion-col size="1" *ngFor="let item of rawDataSpacer();"> </ion-col>
+        <ion-col size="1" *ngFor="let item of rawDataSpacer();">&nbsp;</ion-col>
     </ion-row>
-  </ion-item>
-</ion-content>
+    <ion-progress-bar *ngIf="!progress" type="indeterminate" color='primary'></ion-progress-bar>
+    <ion-progress-bar *ngIf="progress" type="determinate" [value]="progress" color='success'></ion-progress-bar>
