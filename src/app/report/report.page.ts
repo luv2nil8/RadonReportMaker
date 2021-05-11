@@ -128,16 +128,15 @@ export class ReportPage implements OnInit {
     console.table( {
       key: this.auth.credentials.key,
       secret: this.auth.credentials.secret,
-      oid: this.reportData.orderId,
       report: this.report
     });
     let finalReport: any;
+    this.report.oid = this.reportData.orderId;
     finalReport = this.report;
     finalReport.data = this.report.data.map(dataSlice => dataSlice.radon);
     this.socket.send( JSON.stringify({
       key: this.auth.credentials.key ,
       secret: this.auth.credentials.secret,
-      oid: this.reportData.orderId,
       report: this.report
     }));
   }

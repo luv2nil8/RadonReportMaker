@@ -4,6 +4,8 @@ export class Report {
 
     inputString: string;
     address: string;
+    oid: number;
+    UUID: string;
     startTime: Date;
     endTime: Date;
     inspector: string;
@@ -96,7 +98,7 @@ export class Report {
             dataSlice.humidity = parseInt(slice[3], null);
             radonData.push(dataSlice);
         });
-        return radonData;
+        return radonData.slice(-48);
     }
 
     extractAverage(): number {

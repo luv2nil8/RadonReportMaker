@@ -6,7 +6,7 @@ import { IntentDataService } from '../services/intent-data.service';
 import { Plugins, FilesystemEncoding } from '@capacitor/core';
 const { Filesystem } = Plugins;
 import { Report } from '../report/report';
-import { ModalController, NavController, Platform, PopoverController } from '@ionic/angular';
+import { NavController, Platform, PopoverController } from '@ionic/angular';
 import { ReportDataService } from '../services/report-data.service';
 
 
@@ -136,9 +136,10 @@ export class HomePage implements OnInit {
   }
   async setReportDataAndNav(address){
     this.reportData.orderId = address.oid;
+    this.reportData.report.UUID = address.id;
+    this.reportData.report.oid = address.oid;
     this.reportData.report.address = `${address.address1} ${address.address2}, ${address.city}`;
     this.reportData.report.inspector = (await this.auth.getUser()).firstname;
-    ('Report: ');
     console.table(this.reportData.report);
     this.back.unsubscribe();
     this.navCtrl.navigateForward('report', {});
